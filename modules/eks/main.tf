@@ -57,7 +57,7 @@ resource "aws_eks_node_group" "this" {
 }
 
 resource "aws_iam_role" "cluster" {
-  name = "${var.cluster_name}-cluster-role"
+  name = "eksClusterRole"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -84,7 +84,7 @@ resource "aws_iam_role_policy_attachment" "vpc_resource_controller" {
 }
 
 resource "aws_iam_role" "node" {
-  name = "eksClusterRole"
+  name = "${var.cluster_name}-node-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
