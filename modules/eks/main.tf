@@ -84,7 +84,7 @@ resource "aws_iam_role_policy_attachment" "vpc_resource_controller" {
 }
 
 resource "aws_iam_role" "node" {
-  name = "${var.cluster_name}-node-role"
+  name = "AmazonEKSNodeRole"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"

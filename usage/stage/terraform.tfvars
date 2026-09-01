@@ -17,10 +17,10 @@ endpoint_public_access  = true
 
 # Node Group Configuration - Optimized for account limits
 node_group_name = "eks-stage-nodes"
-desired_size    = 2        # 2 nodes for HA
-max_size        = 2        # Max 2 nodes to stay within limits
-min_size        = 1        # Min 1 node
-instance_types  = ["t3.small"]  # t3.small has 2 vCPU (2000m), 2GB RAM
+desired_size    = 2
+max_size        = 2
+min_size        = 1
+instance_types  = ["t3.small"]
 disk_size       = 20
 
 environment = "stage"
