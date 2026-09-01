@@ -4,39 +4,98 @@ variable "aws_region" {
   default     = "us-east-1"
 }
 
-variable "ami_id" {
-  description = "AMI ID for the EC2 instance"
+variable "vpc_name" {
+  description = "Name of the VPC"
   type        = string
 }
 
-variable "instance_type" {
-  description = "EC2 instance type"
+variable "vpc_cidr" {
+  description = "CIDR block for VPC"
   type        = string
-  default     = "t2.micro"
+  default     = "10.0.0.0/16"
 }
 
-variable "subnet_id" {
-  description = "Subnet ID where EC2 instance will be launched"
-  type        = string
-}
-
-variable "security_group_ids" {
-  description = "List of security group IDs"
+variable "availability_zones" {
+  description = "List of availability zones"
   type        = list(string)
 }
 
-variable "key_name" {
-  description = "SSH key pair name"
+variable "public_subnet_cidrs" {
+  description = "CIDR blocks for public subnets"
+  type        = list(string)
+}
+
+variable "private_subnet_cidrs" {
+  description = "CIDR blocks for private subnets"
+  type        = list(string)
+}
+
+variable "enable_nat_gateway" {
+  description = "Enable NAT Gateway"
+  type        = bool
+  default     = true
+}
+
+variable "single_nat_gateway" {
+  description = "Use single NAT Gateway"
+  type        = bool
+  default     = true
+}
+
+variable "cluster_name" {
+  description = "Name of the EKS cluster"
   type        = string
 }
 
-variable "instance_name" {
-  description = "Name tag for the EC2 instance"
+variable "kubernetes_version" {
+  description = "Kubernetes version"
+  type        = string
+  default     = "1.28"
+}
+
+variable "endpoint_private_access" {
+  description = "Enable private API endpoint"
+  type        = bool
+  default     = true
+}
+
+variable "endpoint_public_access" {
+  description = "Enable public API endpoint"
+  type        = bool
+  default     = true
+}
+
+variable "node_group_name" {
+  description = "Name of the EKS node group"
   type        = string
 }
 
-variable "root_volume_size" {
-  description = "Size of root volume in GB"
+variable "desired_size" {
+  description = "Desired number of nodes"
+  type        = number
+  default     = 2
+}
+
+variable "max_size" {
+  description = "Maximum number of nodes"
+  type        = number
+  default     = 3
+}
+
+variable "min_size" {
+  description = "Minimum number of nodes"
+  type        = number
+  default     = 1
+}
+
+variable "instance_types" {
+  description = "Instance types for node group"
+  type        = list(string)
+  default     = ["t3.medium"]
+}
+
+variable "disk_size" {
+  description = "Disk size for nodes in GB"
   type        = number
   default     = 20
 }

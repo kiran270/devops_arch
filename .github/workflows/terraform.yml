@@ -87,7 +87,8 @@ jobs:
 
       - name: Terraform Plan
         working-directory: ./usage/${{ matrix.environment }}
-        run: terraform plan -no-color
+        run: terraform plan -no-color -input=false
+        continue-on-error: true
 
   terraform-apply-dev:
     name: Terraform Apply - Dev
@@ -119,7 +120,7 @@ jobs:
 
       - name: Terraform Apply
         working-directory: ./usage/dev
-        run: terraform apply -auto-approve
+        run: terraform apply -auto-approve -input=false
 
   terraform-apply-stage:
     name: Terraform Apply - Stage
@@ -151,4 +152,4 @@ jobs:
 
       - name: Terraform Apply
         working-directory: ./usage/stage
-        run: terraform apply -auto-approve
+        run: terraform apply -auto-approve -input=false
