@@ -11,7 +11,7 @@ single_nat_gateway   = true
 
 # EKS Cluster Configuration
 cluster_name            = "eks-dev-cluster"
-kubernetes_version      = "1.28"
+kubernetes_version      = "1.36"
 endpoint_private_access = true
 endpoint_public_access  = true
 
