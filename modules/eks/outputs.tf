@@ -46,10 +46,10 @@ output "node_group_status" {
 
 output "cluster_iam_role_arn" {
   description = "IAM role ARN of the EKS cluster"
-  value       = aws_iam_role.cluster.arn
+  value       = var.create_iam_roles ? aws_iam_role.cluster[0].arn : data.aws_iam_role.existing_cluster[0].arn
 }
 
 output "node_iam_role_arn" {
   description = "IAM role ARN of the EKS node group"
-  value       = aws_iam_role.node.arn
+  value       = var.create_iam_roles ? aws_iam_role.node[0].arn : data.aws_iam_role.existing_node[0].arn
 }

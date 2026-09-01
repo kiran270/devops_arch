@@ -37,7 +37,7 @@ module "eks_cluster" {
   cluster_name       = var.cluster_name
   kubernetes_version = var.kubernetes_version
   subnet_ids         = concat(module.vpc.public_subnet_ids, module.vpc.private_subnet_ids)
-  node_subnet_ids    = module.vpc.public_subnet_ids  # Use public subnets for nodes (no NAT Gateway needed)
+  node_subnet_ids    = module.vpc.public_subnet_ids
 
   cluster_security_group_ids = [module.vpc.eks_cluster_security_group_id]
 
@@ -50,6 +50,9 @@ module "eks_cluster" {
   min_size        = var.min_size
   instance_types  = var.instance_types
   disk_size       = var.disk_size
+
+  # Use existing IAM roles
+  create_iam_roles = false
 
   tags = {
     Environment = var.environment
