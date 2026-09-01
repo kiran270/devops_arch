@@ -15,12 +15,12 @@ kubernetes_version      = "1.28"
 endpoint_private_access = true
 endpoint_public_access  = true
 
-# Node Group Configuration
+# Node Group Configuration - Optimized for account limits
 node_group_name = "eks-dev-nodes"
-desired_size    = 2
-max_size        = 3
-min_size        = 1
-instance_types  = ["t3.medium"]
+desired_size    = 1        # Reduced to 1 node to fit limits
+max_size        = 2        # Max 2 nodes
+min_size        = 1        # Min 1 node
+instance_types  = ["t3.small"]  # t3.small has 2 vCPU (2000m), 2GB RAM
 disk_size       = 20
 
 environment = "dev"

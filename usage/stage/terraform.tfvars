@@ -15,12 +15,12 @@ kubernetes_version      = "1.28"
 endpoint_private_access = true
 endpoint_public_access  = true
 
-# Node Group Configuration
+# Node Group Configuration - Optimized for account limits
 node_group_name = "eks-stage-nodes"
-desired_size    = 3
-max_size        = 5
-min_size        = 2
-instance_types  = ["t3.large"]
-disk_size       = 30
+desired_size    = 2        # 2 nodes for HA
+max_size        = 2        # Max 2 nodes to stay within limits
+min_size        = 1        # Min 1 node
+instance_types  = ["t3.small"]  # t3.small has 2 vCPU (2000m), 2GB RAM
+disk_size       = 20
 
 environment = "stage"
