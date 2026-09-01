@@ -95,3 +95,9 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "create_node_group" {
+  description = "Whether to create a managed node group"
+  type        = bool
+  default     = false
+}

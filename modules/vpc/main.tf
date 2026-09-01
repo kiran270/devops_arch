@@ -34,6 +34,7 @@ resource "aws_subnet" "public" {
       Name                                           = "${var.vpc_name}-public-${var.availability_zones[count.index]}"
       "kubernetes.io/role/elb"                       = "1"
       "kubernetes.io/cluster/${var.cluster_name}"    = "shared"
+      "karpenter.sh/discovery"                       = var.cluster_name
     },
     var.tags
   )
@@ -168,6 +169,7 @@ resource "aws_security_group" "eks_nodes" {
     {
       Name                                        = "${var.vpc_name}-eks-nodes-sg"
       "kubernetes.io/cluster/${var.cluster_name}" = "owned"
+      "karpenter.sh/discovery"                    = var.cluster_name
     },
     var.tags
   )

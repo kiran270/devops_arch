@@ -31,17 +31,17 @@ output "cluster_security_group_id" {
 
 output "node_group_id" {
   description = "EKS node group ID"
-  value       = aws_eks_node_group.this.id
+  value       = var.create_node_group ? aws_eks_node_group.this[0].id : null
 }
 
 output "node_group_arn" {
   description = "EKS node group ARN"
-  value       = aws_eks_node_group.this.arn
+  value       = var.create_node_group ? aws_eks_node_group.this[0].arn : null
 }
 
 output "node_group_status" {
   description = "EKS node group status"
-  value       = aws_eks_node_group.this.status
+  value       = var.create_node_group ? aws_eks_node_group.this[0].status : null
 }
 
 output "cluster_iam_role_arn" {
@@ -52,4 +52,14 @@ output "cluster_iam_role_arn" {
 output "node_iam_role_arn" {
   description = "IAM role ARN of the EKS node group"
   value       = aws_iam_role.node.arn
+}
+
+output "node_iam_role_name" {
+  description = "IAM role name of the EKS node group"
+  value       = aws_iam_role.node.name
+}
+
+output "oidc_provider_arn" {
+  description = "ARN of the OIDC provider"
+  value       = aws_iam_openid_connect_provider.cluster.arn
 }
