@@ -1,0 +1,154 @@
+name: Terraform CI/CD
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'modules/**'
+      - 'usage/**'
+      - '.github/workflows/terraform.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'modules/**'
+      - 'usage/**'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy'
+        required: true
+        type: choice
+        options:
+          - dev
+          - stage
+
+env:
+  TF_VERSION: '1.5.0'
+  AWS_REGION: 'us-east-1'
+
+jobs:
+  terraform-validate:
+    name: Terraform Validate
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        environment: [dev, stage]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform Format Check
+        working-directory: ./usage/${{ matrix.environment }}
+        run: terraform fmt -check -recursive
+
+      - name: Terraform Init
+        working-directory: ./usage/${{ matrix.environment }}
+        run: terraform init -backend=false
+
+      - name: Terraform Validate
+        working-directory: ./usage/${{ matrix.environment }}
+        run: terraform validate
+
+  terraform-plan:
+    name: Terraform Plan
+    runs-on: ubuntu-latest
+    needs: terraform-validate
+    if: github.event_name == 'pull_request'
+    strategy:
+      matrix:
+        environment: [dev, stage]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform Init
+        working-directory: ./usage/${{ matrix.environment }}
+        run: terraform init
+
+      - name: Terraform Plan
+        working-directory: ./usage/${{ matrix.environment }}
+        run: terraform plan -no-color
+        continue-on-error: true
+
+  terraform-apply-dev:
+    name: Terraform Apply - Dev
+    runs-on: ubuntu-latest
+    needs: terraform-validate
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment: dev
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform Init
+        working-directory: ./usage/dev
+        run: terraform init
+
+      - name: Terraform Apply
+        working-directory: ./usage/dev
+        run: terraform apply -auto-approve
+
+  terraform-apply-stage:
+    name: Terraform Apply - Stage
+    runs-on: ubuntu-latest
+    needs: terraform-apply-dev
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment: stage
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform Init
+        working-directory: ./usage/stage
+        run: terraform init
+
+      - name: Terraform Apply
+        working-directory: ./usage/stage
+        run: terraform apply -auto-approve
