@@ -15,48 +15,7 @@ resource "aws_eks_cluster" "this" {
 
   tags = merge(
     {
-      Name = var.cluster_name
-      "karpenter.sh/discovery" = var.cluster_name
-    },
-    var.tags
-  )
-
-  depends_on = [
-    aws_iam_role_policy_attachment.cluster_policy,
-    aws_iam_role_policy_attachment.vpc_resource_controller,
-  ]
-}
-
-data "tls_certificate" "cluster" {
-  url = aws_eks_cluster.this.identity[0].oidc[0].issuer
-}
-
-resource "aws_iam_openid_connect_provider" "cluster" {
-  client_id_list  = ["sts.amazonaws.com"]
-  thumbprint_list = [data.tls_certificate.cluster.certificates[0].sha1_fingerprint]
-  url             = aws_eks_cluster.this.identity[0].oidc[0].issuer
-
-  tags = var.tags
-}
-
-resource "aws_eks_cluster" "this" {
-  name     = var.cluster_name
-  role_arn = aws_iam_role.cluster.arn
-  version  = var.kubernetes_version
-
-  vpc_config {
-    subnet_ids              = var.subnet_ids
-    endpoint_private_access = var.endpoint_private_access
-    endpoint_public_access  = var.endpoint_public_access
-    public_access_cidrs     = var.public_access_cidrs
-    security_group_ids      = var.cluster_security_group_ids
-  }
-
-  enabled_cluster_log_types = var.enabled_cluster_log_types
-
-  tags = merge(
-    {
-      Name = var.cluster_name
+      Name                     = var.cluster_name
       "karpenter.sh/discovery" = var.cluster_name
     },
     var.tags
@@ -112,7 +71,7 @@ resource "aws_eks_node_group" "this" {
 }
 
 resource "aws_iam_role" "cluster" {
-  name = "eksClusterRole"
+  name = "${var.cluster_name}-cluster-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
