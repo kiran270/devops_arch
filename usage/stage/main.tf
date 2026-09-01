@@ -51,8 +51,8 @@ module "eks_cluster" {
   instance_types  = var.instance_types
   disk_size       = var.disk_size
 
-  # Use existing IAM roles
-  create_iam_roles = false
+  # Always create new IAM roles
+  create_iam_roles = true
 
   tags = {
     Environment = var.environment

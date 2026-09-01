@@ -99,7 +99,7 @@ variable "tags" {
 variable "create_iam_roles" {
   description = "Whether to create new IAM roles or use existing ones"
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "cluster_role_arn" {
