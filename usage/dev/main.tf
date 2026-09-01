@@ -51,9 +51,6 @@ module "eks_cluster" {
   instance_types  = var.instance_types
   disk_size       = var.disk_size
 
-  # Always create new IAM roles
-  create_iam_roles = true
-
   tags = {
     Environment = var.environment
     ManagedBy   = "Terraform"

@@ -95,21 +95,3 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
-
-variable "create_iam_roles" {
-  description = "Whether to create new IAM roles or use existing ones"
-  type        = bool
-  default     = true
-}
-
-variable "cluster_role_arn" {
-  description = "ARN of existing IAM role for EKS cluster (required if create_iam_roles = false)"
-  type        = string
-  default     = ""
-}
-
-variable "node_role_arn" {
-  description = "ARN of existing IAM role for EKS nodes (required if create_iam_roles = false)"
-  type        = string
-  default     = ""
-}
