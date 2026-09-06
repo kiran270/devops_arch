@@ -28,5 +28,5 @@ environment = "dev"
 
 # Coolify Configuration
 coolify_key_name         = "my-coolify-key"  # Replace with your actual key pair name
-coolify_instance_type    = "t3.medium"
+coolify_instance_type    = "c7i-flex.large"
 coolify_root_volume_size = 30
