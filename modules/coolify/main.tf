@@ -50,7 +50,7 @@ resource "aws_security_group" "coolify" {
     from_port   = 8000
     to_port     = 8000
     protocol    = "tcp"
-    cidr_blocks = var.allowed_ssh_cidr
+    cidr_blocks = ["0.0.0.0/0"]
     description = "Coolify Dashboard"
   }
 
