@@ -34,6 +34,11 @@ chmod 600 /root/.ssh/id_ed25519
 # Allow root SSH login for Coolify
 sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin prohibit-password/' /etc/ssh/sshd_config
 sed -i 's/PermitRootLogin no/PermitRootLogin prohibit-password/' /etc/ssh/sshd_config
+
+# Make SSH listen on all interfaces including Docker bridge
+sed -i 's/#ListenAddress 0.0.0.0/ListenAddress 0.0.0.0/' /etc/ssh/sshd_config
+echo "ListenAddress 0.0.0.0" >> /etc/ssh/sshd_config
+
 systemctl restart ssh
 
 # Install Docker

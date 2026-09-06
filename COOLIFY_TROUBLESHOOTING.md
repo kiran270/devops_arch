@@ -178,6 +178,61 @@ ssh ubuntu@<public-ip>
 free -h
 ```
 
+## SSH Connection Refused Error in Coolify
+
+### Issue: "ssh: connect to host localhost port 22: Connection refused"
+
+This happens when Coolify's Docker container can't reach the host's SSH service.
+
+### Quick Fix for Running Instance (Your Current Situation)
+
+Since you're already SSH'd into the instance as ubuntu user:
+
+**Step 1: Get the host IP that Docker can reach**
+```bash
+# Get the Docker bridge IP (usually 172.17.0.1)
+ip addr show docker0 | grep inet | awk '{print $2}' | cut -d'/' -f1
+```
+
+**Step 2: Test SSH connectivity from Docker context**
+```bash
+# Get into Coolify's network context
+sudo docker exec -it $(sudo docker ps -q --filter name=coolify) sh -c "ssh -o StrictHostKeyChecking=no root@172.17.0.1 echo 'SSH works'"
+```
+
+**Step 3: Use the Docker bridge IP in Coolify setup**
+
+When configuring the server in Coolify dashboard:
+- **Host**: `172.17.0.1` (not localhost or 127.0.0.1)
+- **Port**: `22`
+- **User**: `root`
+- **Private Key**: Paste the output from `sudo cat /root/.ssh/id_ed25519`
+
+### Alternative: Find the correct IP automatically
+
+```bash
+# This will tell you which IP to use
+sudo docker run --rm --network host alpine sh -c "ip route | grep default | awk '{print \$3}'"
+```
+
+### If still having issues
+
+**Option 1: Make Docker use host network**
+```bash
+# Stop current Coolify
+sudo docker stop $(sudo docker ps -q --filter name=coolify)
+
+# Reinstall with host network (run as root)
+sudo -i
+curl -fsSL https://cdn.coollabs.io/coolify/install.sh | bash
+```
+
+**Option 2: Verify SSH is accessible from Docker**
+```bash
+# Test from a temporary container
+sudo docker run --rm alpine sh -c "apk add openssh-client && ssh -o StrictHostKeyChecking=no root@172.17.0.1 -i /path/to/key echo test"
+```
+
 ## Get Help
 
 If still not working, collect these details:
@@ -187,6 +242,8 @@ If still not working, collect these details:
 4. Output of: `sudo docker ps`
 5. Output of: `cat /var/log/coolify-install.log`
 6. Output of: `sudo tail -100 /var/log/cloud-init-output.log`
+7. Output of: `ip addr show docker0`
+8. Output of: `sudo netstat -tlnp | grep :22`
 
 ## Force Re-apply Security Group
 
