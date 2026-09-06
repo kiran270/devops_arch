@@ -27,6 +27,6 @@ environment = "dev"
 
 
 # Coolify Configuration
-coolify_key_name         = "your-key-pair-name"  # Update with your SSH key name
+coolify_key_name         = "my-coolify-key"  # Replace with your actual key pair name
 coolify_instance_type    = "t3.medium"
 coolify_root_volume_size = 30
