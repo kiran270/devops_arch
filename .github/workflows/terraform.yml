@@ -32,6 +32,10 @@ on:
         options:
           - plan
           - apply
+      target:
+        description: 'Target specific module (e.g., module.coolify, module.eks_cluster, leave empty for all)'
+        required: false
+        type: string
 
 env:
   TF_VERSION: '1.5.0'
@@ -92,7 +96,12 @@ jobs:
 
       - name: Terraform Plan
         working-directory: ./usage/${{ matrix.environment }}
-        run: terraform plan -no-color -input=false
+        run: |
+          if [ -n "${{ github.event.inputs.target }}" ]; then
+            terraform plan -no-color -input=false -target=${{ github.event.inputs.target }}
+          else
+            terraform plan -no-color -input=false
+          fi
         continue-on-error: true
 
   terraform-apply-dev:
@@ -128,7 +137,12 @@ jobs:
 
       - name: Terraform Apply
         working-directory: ./usage/dev
-        run: terraform apply -auto-approve -input=false
+        run: |
+          if [ -n "${{ github.event.inputs.target }}" ]; then
+            terraform apply -auto-approve -input=false -target=${{ github.event.inputs.target }}
+          else
+            terraform apply -auto-approve -input=false
+          fi
 
   terraform-apply-stage:
     name: Terraform Apply - Stage
@@ -163,4 +177,9 @@ jobs:
 
       - name: Terraform Apply
         working-directory: ./usage/stage
-        run: terraform apply -auto-approve -input=false
+        run: |
+          if [ -n "${{ github.event.inputs.target }}" ]; then
+            terraform apply -auto-approve -input=false -target=${{ github.event.inputs.target }}
+          else
+            terraform apply -auto-approve -input=false
+          fi

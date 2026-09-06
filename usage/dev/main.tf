@@ -118,3 +118,26 @@ module "karpenter" {
 
   depends_on = [module.eks_cluster]
 }
+
+
+module "coolify" {
+  source = "../../modules/coolify"
+
+  name              = "dev-coolify"
+  vpc_id            = module.vpc.vpc_id
+  subnet_id         = module.vpc.public_subnet_ids[0]
+  instance_type     = var.coolify_instance_type
+  key_name          = var.coolify_key_name
+  root_volume_size  = var.coolify_root_volume_size
+  hostname          = "coolify-dev"
+  allocate_eip      = true
+  allowed_ssh_cidr  = ["0.0.0.0/0"]
+
+  tags = {
+    Environment = var.environment
+    ManagedBy   = "Terraform"
+    Purpose     = "Coolify"
+  }
+
+  depends_on = [module.vpc]
+}

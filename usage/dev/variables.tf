@@ -105,3 +105,21 @@ variable "environment" {
   type        = string
   default     = "dev"
 }
+
+
+variable "coolify_instance_type" {
+  description = "Instance type for Coolify server"
+  type        = string
+  default     = "t3.medium"
+}
+
+variable "coolify_key_name" {
+  description = "SSH key pair name for Coolify server"
+  type        = string
+}
+
+variable "coolify_root_volume_size" {
+  description = "Root volume size for Coolify server in GB"
+  type        = number
+  default     = 30
+}
